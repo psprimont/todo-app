@@ -21,14 +21,21 @@
                 <% toDoItems.forEach(toDoItem => { %>
                   <div class="card todo-card" style="width: 18rem">
                     <div class="card-body todo-card-body">
-                      <label for="<%= toDoItem.description %>">
-                        <input type="checkbox" class="form-check-input" />
-                        <%= toDoItem.description %>
+                      <!-- ** add functionality to remove/relocate items after they are checked off -->
+                      <label for="<%= toDoItem.taskName %>">
+                        <input type="checkbox" class="form-check-input checkbox" />
+                        <%= toDoItem.taskName %>
+                        <br>
+                        <!-- ** set margin to be same as task name -->
+                        <small class="secondary-text-light"
+                            ><%= toDoItem.description %></small
+                          >
                       </label>
     
                       <div class="row row-cols-2 todo-card-footer">
                         <div class="col-6 d-flex align-items-end">
                           <!-- ** add option to add or change due date -->
+                          <!-- ** remove the No due date option to get rid of redundancy -->
                           <small class="due-date">
                             <% if (toDoItem.dueDateAbsReadable) { %>
                             <i class="fa-regular fa-calendar"></i> 

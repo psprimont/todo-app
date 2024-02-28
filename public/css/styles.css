@@ -61,6 +61,10 @@ h3 {
     align-items: center;
   }
 
+  .checkbox {
+    margin-right: 2px;
+  }
+
   .due-date {
     color: rgb(250, 100, 100, 0.95);
   }

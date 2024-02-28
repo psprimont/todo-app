@@ -54,7 +54,7 @@ function createDueDate (relDate) {
   let dueDate = new Date(today);
 
   if (relDate === "today") {
-    return dueDate;
+    dueDate = relDate;
   } else if (relDate === "tomorrow") {
     dueDate.setDate(dueDate.getDate() + 1);
   } else if (relDate === "later this week") {
@@ -72,6 +72,17 @@ function createDueDate (relDate) {
   };
   return dueDate;
 };
+
+function formatDueDate (absDate) {
+  let formattedDueDate;
+  if (absDate === "No due date") {
+    formattedDueDate = absDate;
+  } else {
+    const options = { weekday: 'short', month: 'short', day: '2-digit' };
+    formattedDueDate = absDate.toLocaleDateString('en-US', options);
+  };
+  return formattedDueDate;
+}
 
 // if today is any day of the week...
 //  if dueDateRel is today, pass today's date into dueDateAbs
@@ -125,10 +136,10 @@ app.post("/", async (req, res) => {
     const col = db.collection("toDoItems");
     let dueDateRel = req.body.dueDate;
     let dueDateAbs = createDueDate(dueDateRel);
-    const options = { weekday: 'short', month: 'short', day: '2-digit' };
-    let dueDateAbsReadable = dueDateAbs.toLocaleDateString('en-US', options);
+    let dueDateAbsReadable = formatDueDate(dueDateAbs);
     let newItem = {
-      description: req.body.newToDo,
+      taskName: req.body.newToDo,
+      description: req.body.description,
       category: req.body.category,
       dueDateRel: req.body.dueDate,
       dueDateAbs: dueDateAbs,
