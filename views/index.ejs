@@ -1,0 +1,176 @@
+<%- include("partials/header") %>
+<div class="d-flex">
+  <%- include("partials/sidebar") %>
+
+  <div class="container">
+    <div class="todo-main">
+      <div class="row" id="heading-row">
+        <div class="col" id="heading-col-1">
+          <div class="row" id="heading-col-1-row-1">
+            <!-- Heading -->
+            <h4 class="mb-4"><%= date %></h4>
+          </div>
+          <h5>Today</h5>
+        </div>
+        <div class="row" id="content-row">
+          <div class="col" id="content-col-1">
+            <!-- To-Do List -->
+            <div id="todo-list">
+              <% if (toDoItems.length > 0) { %>
+                <!-- Render to-do items -->
+                <% toDoItems.forEach(toDoItem => { %>
+                  <div class="card todo-card" style="width: 18rem">
+                    <div class="card-body todo-card-body">
+                      <label for="<%= toDoItem.description %>">
+                        <input type="checkbox" class="form-check-input" />
+                        <%= toDoItem.description %>
+                      </label>
+    
+                      <div class="row row-cols-2 todo-card-footer">
+                        <div class="col-6 d-flex align-items-end">
+                          <!-- ** add option to add or change due date -->
+                          <small class="due-date">
+                            <% if (toDoItem.dueDateAbsReadable) { %>
+                            <i class="fa-regular fa-calendar"></i> 
+                            <%= toDoItem.dueDateAbsReadable %> 
+                            <% } else { %> 
+                              <i class="fa-regular fa-calendar"></i> No due date.
+                              <% } %>
+                          </small>
+                        </div>
+                        <div class="col d-flex align-items-end justify-content-end">
+                          <small class="secondary-text-light"
+                            ><%= toDoItem.category %></small
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <% }); %>
+
+             <% } else { %>
+              <!-- Empty array message -->
+                <div id="nothing-to-do"><span >Nothing to do! How nice.</span></div>
+             <% } %>
+
+            </div>
+          </div>
+          <div class="col" id="content-col-2">
+            <!-- Button trigger modal -->
+            <button
+              type="button"
+              class="btn btn-light add-task-main"
+              data-bs-toggle="modal"
+              data-bs-target="#addNewTask"
+            >
+              <span class="plus-sign">+</span> Add task
+            </button>
+            <!-- Modal - add task -->
+            <div
+              class="modal fade"
+              id="addNewTask"
+              tabindex="-1"
+              aria-labelledby="addNewTaskHeader"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="modal-title fs-5" id="addNewTaskHeader">
+                      Add a new task
+                    </h3>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <form
+                      action="/"
+                      method="post"
+                      id="newTaskForm"
+                      class="add-form"
+                    >
+                      <label for="newToDo" class="visually-hidden"></label>
+                      <input
+                        type="text"
+                        placeholder="Task name"
+                        class="form-control form-control-sm form-input-primary"
+                        id="newToDo"
+                        name="newToDo"
+                        required
+                      />
+                      <input
+                        type="text"
+                        placeholder="Description"
+                        class="form-control form-control-sm form-input-secondary"
+                        name="description"
+                      />
+
+                      <div class="row g-2">
+                        <div class="col-md">
+                          <label for="category" class="form-label"
+                            >Category</label
+                          >
+                          <select
+                            class="form-select form-select-sm"
+                            aria-label="category select"
+                            name="category"
+                          >
+                            <option value="Main" selected>Main</option>
+                            <option value="Personal">Personal</option>
+                            <option value="Home">Home</option>
+                            <option value="Work">Work</option>
+                          </select>
+                        </div>
+                        <div class="col-md">
+                          <label for="dueDate" class="form-label"
+                            >Due Date</label
+                          >
+                          <select
+                            class="form-select form-select-sm"
+                            aria-label="due date select"
+                            name="dueDate"
+                          >
+                            <option value="today" selected>Today</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="later this week">
+                              Later this week
+                            </option>
+                            <option value="this weekend">This weekend</option>
+                            <option value="next week">Next week</option>
+                            <option value="no due date">No due date</option>
+                          </select>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      form="newTaskForm"
+                    >
+                      Add task
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("partials/footer") %>
