@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import express from "express";
+import $ from "jquery";
 import { getDate } from "./date.js";
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, ServerApiVersion, ObjectId } from "mongodb";
 // import mongoose from "mongoose";
 
 dotenv.config();
@@ -47,14 +48,13 @@ const dbName = "toDoApp";
 const todaysDate = getDate();
 
 // set due date
-// ** create no due date text/option
 function createDueDate (relDate) {
   const today = new Date();
   const dayOfWeekNum = today.getDay();
   let dueDate = new Date(today);
 
   if (relDate === "today") {
-    dueDate = relDate;
+    // do nothing
   } else if (relDate === "tomorrow") {
     dueDate.setDate(dueDate.getDate() + 1);
   } else if (relDate === "later this week") {
@@ -84,19 +84,6 @@ function formatDueDate (absDate) {
   return formattedDueDate;
 }
 
-// if today is any day of the week...
-//  if dueDateRel is today, pass today's date into dueDateAbs
-//  if dueDateRel is tomorrow, add 1 to today's date and pass to dueDateAbs
-//  if dueDateRel is next week, set due date to following Mon
-// if today is 1-6, show option for "this weekend"
-//  if today is 1-5, add 5-1 to today's date and pass to dueDateAbs
-//  if today is 6, add 1 to today's date and pass to dueDateAbs
-
-// if today is 0-3, show option "later this week"
-//  if today is 0 or 1, set due date to Wed (add 3 or 2 to date) and pass to dueDateAbs
-//  if today is 2, set due date to Thur (add 2 to date) and pass to dueDateAbs
-//  if today is 3, set due date to Fri (add 2 to date) and pass to dueDateAbs 
-
 
 app.get("/", async (req, res) => {
   try {
@@ -104,10 +91,11 @@ app.get("/", async (req, res) => {
     const db = client.db(dbName);
     const col = db.collection("toDoItems");
 
-    // aggregate by creation date
+    // aggregate by completed status and creation date
     const toDoItems = await col.aggregate([
+      { $match: { completed: false } }, // Only select items with completed: false
       { $sort: { createdDate: 1 } } // Sort by creation date in ascending order
-    ]).toArray();
+  ]).toArray();
 
     // // aggregate by category
     // const toDoItems = await col.aggregate([
@@ -146,6 +134,7 @@ app.post("/", async (req, res) => {
       dueDateAbsReadable: dueDateAbsReadable,
       createdDate: new Date().toLocaleDateString(),
       createdTime: new Date().toLocaleTimeString(),
+      completed: false,
     };
     console.log(newItem);
     createDueDate();
@@ -157,6 +146,61 @@ app.post("/", async (req, res) => {
   }
   res.redirect("/");
 });
+
+let lastRemovedTaskId
+
+// update the completed status of a task
+app.post("/updateCompletedStatus", async (req, res) => {
+  try {
+
+    await client.connect();
+    const db = client.db(dbName);
+    const col = db.collection("toDoItems");
+
+    const taskIdObj = new ObjectId(req.body.taskId);
+    lastRemovedTaskId = taskIdObj;
+    const task = await col.findOne({ _id: taskIdObj });
+    await col.updateOne({ _id: taskIdObj }, { $set: { completed: !task.completed } });
+    console.log(task);
+
+
+    res.send(task);
+  } catch (err) {
+    console.log(err.stack);
+
+    res.status(500).send('Error updating completed status');
+  } finally {
+
+    await client.close();
+  }
+});
+
+app.post("/undoCompletedStatus", async (req, res) => {
+  try {
+
+    await client.connect();
+    const db = client.db(dbName);
+    const col = db.collection("toDoItems");
+
+
+    const taskIdObj = lastRemovedTaskId;
+       console.log (`the new taskIdObj is ${taskIdObj}`);
+    const task = await col.findOne({ _id: taskIdObj });
+    await col.updateOne({ _id: taskIdObj }, { $set: { completed: !task.completed } });
+
+
+    res.send('Completed status updated successfully');
+  } catch (err) {
+    console.log(err.stack);
+
+    res.status(500).send('Error updating completed status');
+  } finally {
+
+    await client.close();
+  }
+});
+
+
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

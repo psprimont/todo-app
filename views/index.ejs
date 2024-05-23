@@ -17,17 +17,16 @@
             <!-- To-Do List -->
             <div id="todo-list">
               <% if (toDoItems.length > 0) { %>
+
                 <!-- Render to-do items -->
                 <% toDoItems.forEach(toDoItem => { %>
                   <div class="card todo-card" style="width: 18rem">
                     <div class="card-body todo-card-body">
-                      <!-- ** add functionality to remove/relocate items after they are checked off -->
-                      <label for="<%= toDoItem.taskName %>">
-                        <input type="checkbox" class="form-check-input checkbox" />
+                      <label for="<%= toDoItem._id %>">
+                        <input type="checkbox" class="form-check-input checkbox" data-task-id="<%= toDoItem._id %>"/>
                         <%= toDoItem.taskName %>
                         <br>
-                        <!-- ** set margin to be same as task name -->
-                        <small class="secondary-text-light"
+                        <small class="secondary-text-light" id="todo-description"
                             ><%= toDoItem.description %></small
                           >
                       </label>
@@ -73,6 +72,7 @@
               <span class="plus-sign">+</span> Add task
             </button>
             <!-- Modal - add task -->
+            <!-- create dropdown calendar option for specific date selection -->
             <div
               class="modal fade"
               id="addNewTask"
@@ -143,9 +143,7 @@
                           >
                             <option value="today" selected>Today</option>
                             <option value="tomorrow">Tomorrow</option>
-                            <option value="later this week">
-                              Later this week
-                            </option>
+                            <option value="later this week">Later this week</option>
                             <option value="this weekend">This weekend</option>
                             <option value="next week">Next week</option>
                             <option value="no due date">No due date</option>
@@ -177,6 +175,18 @@
         </div>
       </div>
     </div>
+
+
+<div class="toast-container position-fixed bottom-0 start-0 p-3">
+  <div id="taskCompletedToast" class="toast align-items-center bg-dark text-white border-0 task-completed-toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-body d-flex justify-content-between align-items-center">
+      <strong>Task completed.</strong>
+      <button type="button" class="btn btn-dark undo-button btn-sm">Undo</button>
+      <button type="button" class="btn-close btn-close-white btn-sm" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
   </div>
 </div>
 

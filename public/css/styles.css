@@ -73,10 +73,6 @@ h3 {
     color: rgba(99, 99, 99, 0.95);
   }
 
-  .completed {
-    text-decoration: line-through;
-  }
-
   .add-form {
     margin-top: 10px;
   }
@@ -109,6 +105,18 @@ h3 {
     font-weight: 300;
   }
 
+  .task-completed-toast {
+    max-width: 280px;
+  }
+
+  .undo-button {
+
+  }
+
   #nothing-to-do {
     margin-top: 10px;
+  }
+
+  #todo-description {
+    margin-left: 20px;
   }
